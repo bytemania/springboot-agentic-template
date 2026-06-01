@@ -1,0 +1,49 @@
+# EditorConfig — https://editorconfig.org
+root = true
+
+# Defaults for all files
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Java source files
+[*.java]
+indent_size = 4
+max_line_length = 120
+
+# Gradle build files
+[*.gradle]
+indent_size = 4
+
+[*.gradle.kts]
+indent_size = 4
+
+# XML (Spring config, Maven-style descriptors)
+[*.xml]
+indent_size = 4
+
+# YAML (application.yml, etc.)
+[*.{yml,yaml}]
+indent_size = 2
+
+# JSON
+[*.json]
+indent_size = 2
+
+# Properties files
+[*.properties]
+indent_size = 4
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+indent_size = 2
+end_of_line = lf
