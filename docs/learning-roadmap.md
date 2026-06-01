@@ -177,6 +177,10 @@ First generate a plan only.
 
 Do not modify files until approval is given.
 
+
+---
+
+
 ---
 
 # B - ADVANCED FEATURES
@@ -254,6 +258,8 @@ Events:
 - UserRegistered
 
 ---
+
+
 
 # D - AGENTIC PLATFORM
 

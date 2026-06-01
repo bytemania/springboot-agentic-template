@@ -1,4 +1,4 @@
-import type { CreateTaskRequest, TaskPriority, TaskResponse, TaskStatus, UpdateTaskRequest } from '../types/task'
+import type { CreateTaskRequest, TaskPriority, TaskResponse, TaskStatus, UpdateTaskRequest, UpdateTaskStatusRequest } from '../types/task'
 
 const BASE = '/api'
 
@@ -62,6 +62,24 @@ export async function addTag(id: number, tag: string): Promise<TaskResponse> {
 export async function removeTag(id: number, tag: string): Promise<TaskResponse> {
   const res = await fetch(`${BASE}/tasks/${id}/tags/${encodeURIComponent(tag)}`, {
     method: 'DELETE',
+  })
+  return handleResponse<TaskResponse>(res)
+}
+
+export async function replaceTask(id: number, body: CreateTaskRequest): Promise<TaskResponse> {
+  const res = await fetch(`${BASE}/tasks/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  return handleResponse<TaskResponse>(res)
+}
+
+export async function updateTaskStatus(id: number, body: UpdateTaskStatusRequest): Promise<TaskResponse> {
+  const res = await fetch(`${BASE}/tasks/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
   })
   return handleResponse<TaskResponse>(res)
 }

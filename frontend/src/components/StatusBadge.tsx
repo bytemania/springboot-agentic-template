@@ -4,12 +4,14 @@ const STATUS_STYLES: Record<TaskStatus, string> = {
   TODO: 'bg-slate-100 text-slate-700',
   IN_PROGRESS: 'bg-blue-100 text-blue-700',
   DONE: 'bg-green-100 text-green-700',
+  CANCELLED: 'bg-gray-100 text-gray-500 line-through',
 }
 
 const STATUS_LABELS: Record<TaskStatus, string> = {
   TODO: 'To Do',
   IN_PROGRESS: 'In Progress',
   DONE: 'Done',
+  CANCELLED: 'Cancelled',
 }
 
 interface StatusBadgeProps {

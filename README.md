@@ -7,7 +7,7 @@ A production-grade Spring Boot 3 + React task manager — built as a learning te
 | Layer | Technology |
 |---|---|
 | API | Java 21 + Spring Boot 3.3 + Spring Data JPA |
-| Database | PostgreSQL 16 (H2 for unit tests) |
+| Database | PostgreSQL 16 (H2 for local dev and unit tests) |
 | Migrations | Flyway |
 | Validation | Jakarta Bean Validation |
 | Observability | Micrometer + Prometheus + Grafana + OpenTelemetry |

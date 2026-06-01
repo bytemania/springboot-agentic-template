@@ -1,5 +1,5 @@
-export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE'
-export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH'
+export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE' | 'CANCELLED'
+export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
 
 export interface TaskResponse {
   id: number
@@ -26,4 +26,8 @@ export interface UpdateTaskRequest {
   status?: TaskStatus
   priority?: TaskPriority
   dueDate?: string
+}
+
+export interface UpdateTaskStatusRequest {
+  status: TaskStatus
 }

@@ -70,6 +70,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
               <option value="TODO">To Do</option>
               <option value="IN_PROGRESS">In Progress</option>
               <option value="DONE">Done</option>
+              <option value="CANCELLED">Cancelled</option>
             </select>
           </div>
 
@@ -83,6 +84,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
               <option value="LOW">Low</option>
               <option value="MEDIUM">Medium</option>
               <option value="HIGH">High</option>
+              <option value="URGENT">Urgent</option>
             </select>
           </div>
 

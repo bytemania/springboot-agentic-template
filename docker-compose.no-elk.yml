@@ -1,0 +1,7 @@
+services:
+  elasticsearch:
+    profiles: ["elk"]
+  logstash:
+    profiles: ["elk"]
+  kibana:
+    profiles: ["elk"]

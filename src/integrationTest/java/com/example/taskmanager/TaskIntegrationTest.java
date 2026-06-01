@@ -176,4 +176,38 @@ class TaskIntegrationTest {
         ResponseEntity<String> response = restTemplate.getForEntity("/tasks/99999", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
+
+    @Test
+    void replace_task_replaces_all_fields() {
+        ResponseEntity<TaskResponse> created = restTemplate.postForEntity(
+                "/tasks", new CreateTaskRequest("Original", "old desc", TaskPriority.LOW, null), TaskResponse.class);
+        Long id = created.getBody().id();
+
+        CreateTaskRequest replacement = new CreateTaskRequest("Replaced", "new desc", TaskPriority.URGENT, null);
+        ResponseEntity<TaskResponse> response = restTemplate.exchange(
+                "/tasks/" + id, HttpMethod.PUT, new HttpEntity<>(replacement), TaskResponse.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().title()).isEqualTo("Replaced");
+        assertThat(response.getBody().description()).isEqualTo("new desc");
+        assertThat(response.getBody().priority()).isEqualTo(TaskPriority.URGENT);
+        assertThat(response.getBody().status()).isEqualTo(TaskStatus.TODO);
+    }
+
+    @Test
+    void update_task_status_changes_only_status() {
+        ResponseEntity<TaskResponse> created = restTemplate.postForEntity(
+                "/tasks", new CreateTaskRequest("Status Test", null, TaskPriority.MEDIUM, null), TaskResponse.class);
+        Long id = created.getBody().id();
+
+        ResponseEntity<TaskResponse> response = restTemplate.exchange(
+                "/tasks/" + id + "/status",
+                HttpMethod.PATCH,
+                new HttpEntity<>(new com.example.taskmanager.dto.StatusUpdateRequest(TaskStatus.CANCELLED)),
+                TaskResponse.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().status()).isEqualTo(TaskStatus.CANCELLED);
+        assertThat(response.getBody().title()).isEqualTo("Status Test");
+    }
 }

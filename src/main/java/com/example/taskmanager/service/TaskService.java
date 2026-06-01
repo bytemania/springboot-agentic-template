@@ -4,6 +4,7 @@ import com.example.taskmanager.domain.Task;
 import com.example.taskmanager.domain.TaskPriority;
 import com.example.taskmanager.domain.TaskStatus;
 import com.example.taskmanager.dto.CreateTaskRequest;
+import com.example.taskmanager.dto.StatusUpdateRequest;
 import com.example.taskmanager.dto.TaskResponse;
 import com.example.taskmanager.dto.UpdateTaskRequest;
 import com.example.taskmanager.exception.TaskNotFoundException;
@@ -126,6 +127,24 @@ public class TaskService {
         Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
         task.getTags().remove(tag);
         tagsRemovedCounter.increment();
+        return toResponse(task);
+    }
+
+    @Transactional
+    public TaskResponse replaceTask(Long id, CreateTaskRequest request) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+        task.setPriority(request.priority() != null ? request.priority() : TaskPriority.MEDIUM);
+        task.setDueDate(request.dueDate());
+        task.setStatus(TaskStatus.TODO);
+        return toResponse(task);
+    }
+
+    @Transactional
+    public TaskResponse updateTaskStatus(Long id, StatusUpdateRequest request) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        task.setStatus(request.status());
         return toResponse(task);
     }
 

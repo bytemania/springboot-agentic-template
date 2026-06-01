@@ -5,6 +5,7 @@ import { StatusBadge } from './StatusBadge'
 import { PriorityBadge } from './PriorityBadge'
 import { TagBadge } from './TagBadge'
 import { EditTaskModal } from './EditTaskModal'
+import { TaskDetailPanel } from './TaskDetailPanel'
 
 interface TaskCardProps {
   task: TaskResponse
@@ -12,6 +13,7 @@ interface TaskCardProps {
 
 export function TaskCard({ task }: TaskCardProps) {
   const [showEdit, setShowEdit] = useState(false)
+  const [showDetail, setShowDetail] = useState(false)
   const deleteTask = useDeleteTask()
 
   function handleDelete() {
@@ -24,7 +26,10 @@ export function TaskCard({ task }: TaskCardProps) {
     <>
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex flex-col gap-3 hover:shadow-md transition-shadow">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-gray-900 text-sm leading-snug flex-1">{task.title}</h3>
+          <h3
+            className="font-semibold text-gray-900 text-sm leading-snug flex-1 cursor-pointer hover:text-blue-600 transition-colors"
+            onClick={() => setShowDetail(true)}
+          >{task.title}</h3>
           <div className="flex gap-1 shrink-0">
             <button
               onClick={() => setShowEdit(true)}
@@ -70,6 +75,10 @@ export function TaskCard({ task }: TaskCardProps) {
 
       {showEdit && (
         <EditTaskModal task={task} onClose={() => setShowEdit(false)} />
+      )}
+
+      {showDetail && (
+        <TaskDetailPanel taskId={task.id} onClose={() => setShowDetail(false)} />
       )}
     </>
   )

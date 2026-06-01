@@ -112,8 +112,8 @@ services:
     image: docker.elastic.co/logstash/logstash:8.14.3
     ports:
       - "5044:5044"
-      - "5000:5000/tcp"
-      - "5000:5000/udp"
+      - "5001:5000/tcp"
+      - "5001:5000/udp"
     volumes:
       - ./observability/logstash/pipeline:/usr/share/logstash/pipeline:ro
     depends_on:

@@ -10,6 +10,7 @@ import com.example.taskmanager.domain.Task;
 import com.example.taskmanager.domain.TaskPriority;
 import com.example.taskmanager.domain.TaskStatus;
 import com.example.taskmanager.dto.CreateTaskRequest;
+import com.example.taskmanager.dto.StatusUpdateRequest;
 import com.example.taskmanager.dto.TaskResponse;
 import com.example.taskmanager.dto.UpdateTaskRequest;
 import com.example.taskmanager.exception.TaskNotFoundException;
@@ -247,5 +248,38 @@ class TaskServiceTest {
         TaskResponse response = taskService.updateTask(1L, new UpdateTaskRequest(null, null, null, null, due));
 
         assertThat(response.dueDate()).isEqualTo(due);
+    }
+
+    @Test
+    void replaceTask_updatesAllFields() {
+        Task task = buildTask(1L, "Old Title", TaskStatus.IN_PROGRESS, TaskPriority.LOW);
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+
+        CreateTaskRequest request = new CreateTaskRequest("New Title", "New desc", TaskPriority.URGENT, null);
+        TaskResponse response = taskService.replaceTask(1L, request);
+
+        assertThat(response.title()).isEqualTo("New Title");
+        assertThat(response.description()).isEqualTo("New desc");
+        assertThat(response.priority()).isEqualTo(TaskPriority.URGENT);
+        assertThat(response.status()).isEqualTo(TaskStatus.TODO);
+    }
+
+    @Test
+    void replaceTask_unknownId_throwsTaskNotFoundException() {
+        when(taskRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> taskService.replaceTask(99L, new CreateTaskRequest("T", null, null, null)))
+                .isInstanceOf(TaskNotFoundException.class)
+                .hasMessageContaining("99");
+    }
+
+    @Test
+    void updateTaskStatus_setsStatus() {
+        Task task = buildTask(1L, "Task", TaskStatus.TODO, TaskPriority.MEDIUM);
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+
+        TaskResponse response = taskService.updateTaskStatus(1L, new StatusUpdateRequest(TaskStatus.CANCELLED));
+
+        assertThat(response.status()).isEqualTo(TaskStatus.CANCELLED);
     }
 }

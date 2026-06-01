@@ -4,6 +4,7 @@ const PRIORITY_STYLES: Record<TaskPriority, string> = {
   LOW: 'bg-gray-100 text-gray-600',
   MEDIUM: 'bg-yellow-100 text-yellow-700',
   HIGH: 'bg-red-100 text-red-700',
+  URGENT: 'bg-red-600 text-white',
 }
 
 interface PriorityBadgeProps {

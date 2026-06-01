@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.taskmanager.domain.TaskPriority;
 import com.example.taskmanager.domain.TaskStatus;
 import com.example.taskmanager.dto.CreateTaskRequest;
+import com.example.taskmanager.dto.StatusUpdateRequest;
 import com.example.taskmanager.dto.TaskResponse;
 import com.example.taskmanager.dto.UpdateTaskRequest;
 import com.example.taskmanager.exception.GlobalExceptionHandler;
@@ -233,5 +235,79 @@ class TaskControllerTest {
         when(taskService.removeTag(99L, "urgent")).thenThrow(new TaskNotFoundException(99L));
 
         mockMvc.perform(delete("/tasks/99/tags/urgent")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void replaceTask_validRequest_returns200() throws Exception {
+        TaskResponse replaced = new TaskResponse(
+                1L,
+                "Replaced",
+                "new desc",
+                TaskStatus.TODO,
+                TaskPriority.URGENT,
+                null,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                Set.of());
+        when(taskService.replaceTask(eq(1L), any(CreateTaskRequest.class))).thenReturn(replaced);
+
+        mockMvc.perform(
+                        put("/tasks/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        """
+                                {"title":"Replaced","priority":"URGENT"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Replaced"))
+                .andExpect(jsonPath("$.priority").value("URGENT"));
+    }
+
+    @Test
+    void replaceTask_notFound_returns404() throws Exception {
+        when(taskService.replaceTask(eq(99L), any(CreateTaskRequest.class))).thenThrow(new TaskNotFoundException(99L));
+
+        mockMvc.perform(
+                        put("/tasks/99")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        """
+                                {"title":"X","priority":"LOW"}
+                                """))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateTaskStatus_validStatus_returns200() throws Exception {
+        TaskResponse updated = new TaskResponse(
+                1L,
+                "Task",
+                null,
+                TaskStatus.CANCELLED,
+                TaskPriority.MEDIUM,
+                null,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                Set.of());
+        when(taskService.updateTaskStatus(eq(1L), any(StatusUpdateRequest.class)))
+                .thenReturn(updated);
+
+        mockMvc.perform(
+                        patch("/tasks/1/status")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        """
+                                {"status":"CANCELLED"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("CANCELLED"));
+    }
+
+    @Test
+    void updateTaskStatus_missingStatus_returns400() throws Exception {
+        mockMvc.perform(patch("/tasks/1/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
     }
 }

@@ -59,6 +59,7 @@ export function TasksPage() {
             <option value="TODO">To Do</option>
             <option value="IN_PROGRESS">In Progress</option>
             <option value="DONE">Done</option>
+            <option value="CANCELLED">Cancelled</option>
           </select>
 
           <select
@@ -70,6 +71,7 @@ export function TasksPage() {
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option>
+            <option value="URGENT">Urgent</option>
           </select>
 
           {(status || priority) && (
