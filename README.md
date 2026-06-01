@@ -341,6 +341,87 @@ open build/reports/tests/test/index.html
 
 ---
 
+## Adding a new feature
+
+### 1. Create the branch
+
+```bash
+git checkout -b feature/FEAT-123
+```
+
+### 2. Run the end-to-end workflow
+
+This is the single command that does everything:
+
+```bash
+/feature-end-to-end "add due date reminders — a user can set a reminder date on a task and GET /tasks/reminders returns all tasks where reminder_date is today or past and status is not DONE"
+```
+
+The workflow runs 11 phases sequentially, each handled by a specialist agent:
+
+| Phase | Agent | What happens |
+|---|---|---|
+| **Analyse** | — | Reads the codebase, maps existing entities, finds the highest migration version, identifies new fields/endpoints |
+| **Architect** | `java-architect` | Reviews the design against architecture rules — approves or blocks with required changes |
+| **Plan** | — | Produces a detailed plan: DTOs, service methods, repository queries, exception names, test scenarios, migration filenames |
+| **Migrate** | `database-engineer` | Writes the Flyway SQL (`V2__...sql`), runs `./gradlew test` to confirm Flyway validates |
+| **Implement** | `spring-boot-engineer` | Writes domain, DTOs, repository, exceptions, service, controller — in that exact order |
+| **Test** | `testing-engineer` | Unit tests, `@WebMvcTest` slice tests, Testcontainers integration tests — runs and fixes until green |
+| **Security** | `security-reviewer` | OWASP Top 10 check on the diff — auto-fixes critical/high findings |
+| **Observability** | `observability-engineer` | Adds Micrometer counters/timers for new service methods, OTEL spans |
+| **Review** | `security-reviewer` | Full diff review — correctness, Spring Boot anti-patterns, test gaps — auto-fixes blockers |
+| **Ship** | — | Parallel `./gradlew build` + `./gradlew test`, then `./gradlew integrationTest` gate |
+| **Frontend** | `react-engineer` | Adds TypeScript types, API wrappers, TanStack Query hooks, updates page components — `npm run build` gate |
+
+The workflow self-heals: if security or review blockers are found, a `spring-boot-engineer` agent fixes them before moving on.
+
+### 3. If you want more control — use commands instead
+
+Skip the workflow and drive each layer yourself:
+
+```bash
+/create-endpoint      # Add a single REST endpoint slice
+/create-entity        # Add a domain entity + migration
+/create-test-suite    # Add tests to existing code
+/review-security      # OWASP review the current diff
+/review-observability # Check metrics/tracing coverage
+```
+
+### 4. Verify locally before committing
+
+```bash
+# Unit + slice tests (no Docker needed)
+./gradlew test
+
+# Integration tests (requires Docker)
+./gradlew integrationTest
+
+# Full stack smoke test
+./gradlew clean build -x test
+docker compose up --build -d
+curl -s http://localhost:8080/actuator/health | jq .
+```
+
+### 5. Commit and push
+
+```bash
+git add .
+git commit -m "feat(FEAT-123): add due date reminders"
+git push origin feature/FEAT-123
+```
+
+### When to use the workflow vs. commands
+
+| Situation | Use |
+|---|---|
+| New feature touching DB + service + controller + frontend | `/feature-end-to-end` |
+| Adding one endpoint to an existing entity | `/create-endpoint` |
+| Only adding tests to existing code | `/create-test-suite` |
+| Security audit before a PR | `/review-security` |
+| Something went wrong mid-workflow | Re-run with same `runId` — completed phases return cached results |
+
+---
+
 ## API reference
 
 | Method | Path | Description |
