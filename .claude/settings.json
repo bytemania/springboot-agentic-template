@@ -36,6 +36,46 @@
     ]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'git commit'; then echo '[hook] Running tests before commit...' && cd /Users/sergio/CoworkSandbox/springboot-agentic-template && ./gradlew test --quiet && echo '[hook] Tests passed — commit allowed.' || (echo '[hook] BLOCKED: tests failed. Fix before committing.' && exit 1); fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '\\.java' && echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '@Entity|@Table'; then echo '[hook] Entity file changed — remember to create a Flyway migration if the schema changed.'; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'db/migration/V[0-9]+__.*\\.sql'; then echo '[hook] Migration file written — running flywayMigrate...' && cd /Users/sergio/CoworkSandbox/springboot-agentic-template && ./gradlew flywayMigrate --quiet && echo '[hook] Migration applied successfully.' || echo '[hook] WARNING: flywayMigrate failed — check the SQL.'; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'gradlew test'; then if echo \"$CLAUDE_TOOL_OUTPUT\" | grep -qE 'BUILD SUCCESSFUL'; then echo '[hook] Tests PASSED.'; elif echo \"$CLAUDE_TOOL_OUTPUT\" | grep -qE 'BUILD FAILED'; then echo '[hook] Tests FAILED — do not commit.'; fi; fi"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

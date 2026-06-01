@@ -4,7 +4,11 @@
       "Bash(mkdir -p /Users/sergio/CoworkSandbox/springboot-agentic-template/.claude/skills/jpa)",
       "Bash(mkdir -p /Users/sergio/CoworkSandbox/springboot-agentic-template/.claude/skills/flyway)",
       "Bash(mkdir -p /Users/sergio/CoworkSandbox/springboot-agentic-template/.claude/skills/performance-engineer)",
-      "Bash(mkdir -p /Users/sergio/CoworkSandbox/springboot-agentic-template/.claude/skills/ci-cd)"
+      "Bash(mkdir -p /Users/sergio/CoworkSandbox/springboot-agentic-template/.claude/skills/ci-cd)",
+      "Bash(mkdir -p /Users/sergio/CoworkSandbox/springboot-agentic-template/.claude/commands)"
+    ],
+    "additionalDirectories": [
+      "/Users/sergio/CoworkSandbox/springboot-agentic-template/.claude"
     ]
   }
 }
