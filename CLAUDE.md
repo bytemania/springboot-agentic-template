@@ -19,6 +19,9 @@ backend engineering with Claude Code, agent skills, and project memory.
 - JUnit 5
 - AssertJ
 - Mockito when needed
+- PostgreSQL 16 (production database — Docker/Minikube)
+- Logstash + Elasticsearch + Kibana (ELK stack — log shipping and search)
+- Nginx (frontend reverse proxy in Docker/Minikube)
 
 ## Architecture rules
 
@@ -79,6 +82,15 @@ Avoid:
 # Run observability stack locally
 docker compose up -d
 
+# Full local stack (app + frontend + postgres + grafana + ELK)
+./gradlew clean build -x test && docker compose up --build -d
+
+# Minikube
+eval $(minikube docker-env)
+docker build -t task-manager-app:latest .
+docker build -t task-manager-frontend:latest ./frontend
+kubectl apply -f k8s/ -n task-manager
+
 # Apply Flyway migrations manually
 ./gradlew flywayMigrate
 ```
@@ -102,14 +114,18 @@ docker compose up -d
 | `ci-cd` | Modify GitHub Actions workflows or release process |
 | `review-code` | Review the current diff before committing |
 | `update-docs` | Update documentation |
+| `docker-development` | Manage full Docker Compose + Minikube stack (app, frontend, postgres, prometheus, grafana, ELK) |
 
 ## Agents available
 
 | Agent | When to use |
 |---|---|
-| `backend-engineer` | Feature implementation (endpoints, services, domain) |
-| `database-agent` | Schema design, query optimization, migration strategy |
-| `performance-engineer` | Profiling, caching, load testing, OTEL instrumentation |
-| `code-reviewer` | Pre-commit review |
-| `qa-engineer` | Test strategy and coverage |
-| `architect` | Architecture decisions and design tradeoffs |
+| `java-architect` | Architecture decisions and design tradeoffs |
+| `spring-boot-engineer` | Feature implementation (endpoints, services, domain) |
+| `testing-engineer` | Test strategy and coverage |
+| `security-reviewer` | Security review and vulnerability analysis |
+| `observability-engineer` | OTEL instrumentation, metrics, tracing, Grafana dashboards |
+| `database-engineer` | Schema design, query optimization, migration strategy |
+| `documentation-writer` | API docs, README, and project documentation |
+| `performance-engineer` | Profiling, caching, load testing |
+| `frontend-engineer` | Frontend interfaces and web UI |

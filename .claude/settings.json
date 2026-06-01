@@ -67,6 +67,15 @@
         ]
       },
       {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(echo \"$CLAUDE_TOOL_INPUT\" | grep -o '\"file_path\"[[:space:]]*:[[:space:]]*\"[^\"]*\"' | head -1 | sed 's/.*\"file_path\"[[:space:]]*:[[:space:]]*\"//;s/\"$//'); if [ -z \"$FILE\" ]; then exit 0; fi; case \"$FILE\" in *.java) ;; *) exit 0 ;; esac; if which palantir-java-format >/dev/null 2>&1; then palantir-java-format --replace \"$FILE\" && echo \"[hook] Formatted $FILE\"; elif [ -f ~/.local/bin/palantir-java-format.jar ]; then java -jar ~/.local/bin/palantir-java-format.jar --replace \"$FILE\" && echo \"[hook] Formatted $FILE\"; else echo '[hook] palantir-java-format not found — skipping format (install from https://github.com/palantir/palantir-java-format/releases)'; fi"
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {
