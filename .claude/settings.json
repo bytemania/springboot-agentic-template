@@ -9,6 +9,7 @@
       "Bash(git commit *)",
       "Bash(git branch*)",
       "Bash(git checkout *)",
+      "Bash(git remote *)",
       "Bash(gh pr *)",
       "Bash(gh issue *)",
       "Bash(gh run *)",
@@ -25,7 +26,17 @@
       "Bash(docker ps*)",
       "Bash(docker logs *)",
       "Bash(curl -s *)",
-      "Bash(curl http://localhost*)"
+      "Bash(curl http://localhost*)",
+      "mcp__github__list_pull_requests",
+      "mcp__github__get_pull_request",
+      "mcp__github__list_pull_request_files",
+      "mcp__github__get_pull_request_diff",
+      "mcp__github__create_pull_request_review",
+      "mcp__github__add_pull_request_review_comment",
+      "mcp__github__get_issue",
+      "mcp__github__list_issues",
+      "mcp__github__search_code",
+      "mcp__github__search_repositories"
     ],
     "deny": [
       "Bash(rm -rf *)",
@@ -80,7 +91,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'gradlew test'; then if echo \"$CLAUDE_TOOL_OUTPUT\" | grep -qE 'BUILD SUCCESSFUL'; then echo '[hook] Tests PASSED.'; elif echo \"$CLAUDE_TOOL_OUTPUT\" | grep -qE 'BUILD FAILED'; then echo '[hook] Tests FAILED — do not commit.'; fi; fi"
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'gradlew test'; then if echo \"$CLAUDE_TOOL_RESULT\" | grep -qE 'BUILD SUCCESSFUL'; then echo '[hook] Tests PASSED.'; elif echo \"$CLAUDE_TOOL_RESULT\" | grep -qE 'BUILD FAILED'; then echo '[hook] Tests FAILED — do not commit.'; fi; fi"
           }
         ]
       }

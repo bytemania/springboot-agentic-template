@@ -324,6 +324,8 @@ const review = await agent(
   `You are a senior Spring Boot code reviewer.
 Project root: ${ROOT}
 
+Use the github-reviewer agent checklist. Cover: Java 21 patterns, Spring Boot architecture rules, API design, test coverage, security (OWASP), observability (Micrometer), Gradle correctness, Docker.
+
 Run: git diff HEAD
 Review the diff for:
 - Correctness bugs: null handling, missing validation, wrong HTTP status codes
